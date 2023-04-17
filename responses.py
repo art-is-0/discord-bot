@@ -26,8 +26,9 @@ def get_reponse(message: str) -> str:
     if p_message == '!help':
         return '`This is a help message that you can modify.`'
 
+    # return 
 
-    # return 'I didn\'t understand what you wrote. Try typing "help".'
+    return 'I didn\'t understand what you wrote. Try typing "!help".'
 
 def annoying_response(number: int) -> str:
 
