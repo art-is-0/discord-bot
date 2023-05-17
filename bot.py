@@ -1,6 +1,9 @@
 import discord
 import responses
 import discord_token
+from discord import app_commands
+from discord.ext import commands
+import random
 
 async def send_message(message, user_message, is_private):
     try:
@@ -26,14 +29,44 @@ async def annoying():
 
 
 def run_discord_bot():
-    TOKEN = discord_token.token()
-    intents = discord.Intents.default()
-    intents.message_content = True
-    client = discord.Client(intents=intents)
+    TOKEN = discord_token.token()   # try to find out how to put the token into a .env file and get it to work.
+    # TOKEN = DISCORD_TOKEN
+    # intents = discord.Intents.all()
+    # intents.message_content = True
+    # client = discord.Client(intents=intents)
+    client = commands.Bot(command_prefix='!', intents = discord.Intents.all()) # Watch the damn capatalization on the Bot, pain ahhhh
+
 
     @client.event
     async def on_ready():
         print(f'{client.user} is now running!')
+        synced = await client.tree.sync()
+        print(f'Synced {len(synced)} command(s)')
+
+    @client.tree.command(name="roll", description = "Rolls dices")
+    async def roll(interaction: discord.Interaction, amount_of_dices:int=1, die_sides:int=6, modifers:str='+1'):
+        message = f'**{amount_of_dices}d{die_sides} {modifers}** ='
+        # message = ""
+
+        for i in range(0, amount_of_dices):
+            number = random.randint(1, die_sides)
+            
+            # if modifers[0] == '+':
+            #     message += f'**{amount_of_dices}d{die_sides} {modifers}** = {number} {modifers} = {number + int(modifers[1])}\n'
+            # else:
+            #     message += f'**{amount_of_dices}d{die_sides} {modifers}** = {number} {modifers} = {number - int(modifers[1])}\n'
+
+            if number == 20:
+                message += f' | {number} {modifers} = **Natural Twenty**'
+            else:
+                if modifers[0] == '+':
+                    message += f' | {number} {modifers} = **{number + int(modifers[1])}** '
+                else:
+                    message += f' | {number} {modifers} = **{number - int(modifers[1])}** '
+                
+            
+        await interaction.response.send_message(f'{message} |')
+        # await interaction.response.send_message(''.join(message))
 
     @client.event
     async def on_message(message):
