@@ -45,28 +45,76 @@ def run_discord_bot():
 
     @client.tree.command(name="roll", description = "Rolls dices")
     async def roll(interaction: discord.Interaction, amount_of_dices:int=1, die_sides:int=6, modifers:str='+1'):
-        message = f'**{amount_of_dices}d{die_sides} {modifers}** ='
+        message = f'**{amount_of_dices}d{die_sides} {modifers}** =\n'
         # message = ""
-
-        for i in range(0, amount_of_dices):
-            number = random.randint(1, die_sides)
-            
-            # if modifers[0] == '+':
-            #     message += f'**{amount_of_dices}d{die_sides} {modifers}** = {number} {modifers} = {number + int(modifers[1])}\n'
-            # else:
-            #     message += f'**{amount_of_dices}d{die_sides} {modifers}** = {number} {modifers} = {number - int(modifers[1])}\n'
-
-            if number == 20:
-                message += f' | {number} {modifers} = **Natural Twenty**'
-            else:
-                if modifers[0] == '+':
-                    message += f' | {number} {modifers} = **{number + int(modifers[1])}** '
-                else:
-                    message += f' | {number} {modifers} = **{number - int(modifers[1])}** '
+        try:
+            for i in range(0, amount_of_dices):
+                number = random.randint(1, die_sides)
                 
+                # if modifers[0] == '+':
+                #     message += f'**{amount_of_dices}d{die_sides} {modifers}** = {number} {modifers} = {number + int(modifers[1])}\n'
+                # else:
+                #     message += f'**{amount_of_dices}d{die_sides} {modifers}** = {number} {modifers} = {number - int(modifers[1])}\n'
+
+                if number == 20:
+                    message += f'\t\t\t\t\t{number} {modifers} = **Nat Twenty**\n'
+                elif number == 1:
+                    message += f'\t\t\t\t\t{number} {modifers} = **Nat One**\n'
+                else:
+                    if modifers[0] == '+':
+                        message += f'\t\t\t\t\t{number} {modifers} = **{number + int(modifers[1])}**\n'
+                    else:
+                        message += f'\t\t\t\t\t{number} {modifers} = **{number - int(modifers[1])}**\n'
+            await interaction.response.send_message(f'{message}')
+        except:
+            await interaction.response.send_message('**Invalid input**, did you try to write modifers like this **+1**')
             
-        await interaction.response.send_message(f'{message} |')
+
         # await interaction.response.send_message(''.join(message))
+
+    @client.tree.command(name='roll-stats', description='Roll for stats')
+    async def roll_stats(interraction: discord.Interaction, die_sides:int=6):
+        message = ''
+        match die_sides:
+            case 6:
+                for i in range(6):
+                    number = 0
+                    lst = []
+                    for i in range(4):
+                        lst.append(random.randint(1,6))
+                    lst.remove(min(lst))
+                    for i in range(len(lst)):
+                        number += lst[i]
+                    message += (f'**4d6** - the lowest = {number}\n')
+            case 20: 
+                for i in range(6):
+                    number = 0
+                    number = random.randint(5,20)
+                    message += (f'**1d20**, 5 or more = {number}\n')
+            case _:
+                message = f'**Not a valid input!**'
+        await interraction.response.send_message(''.join(message))                
+
+    @client.tree.command(name='shutdown', description='Shutting down the bot')
+    async def shutdown(interraction: discord.Interaction):
+        await interraction.response.send_message(content='*Shutting down the bot*')
+        await client.close()
+
+    @client.tree.command(name='flip-a-coin', description='What did you think, you just flip a coin and guess the side!')
+    async def coin_flip(interraction: discord.Interaction, which_side:str='heads'):
+        lst = ['heads', 'tails']
+        flipped = lst[random.randint(0,1)]
+        message = f'You said {which_side} and it was {flipped}.\n'
+        if which_side.lower() == lst[0] or lst[1]:
+            if which_side.lower() == flipped:
+                message += '**You won, congratualtions!!!**'
+            else:
+                message += '**You lost, what a loser!**'
+        else:
+            message += 'Wrong input!'
+
+        await interraction.response.send_message(''.join(message))
+
 
     @client.event
     async def on_message(message):
@@ -87,5 +135,4 @@ def run_discord_bot():
             case _:
                 await send_message(message, user_message, is_private=False)
 
-        
     client.run(TOKEN)

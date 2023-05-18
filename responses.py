@@ -4,6 +4,7 @@ def get_reponse(message: str) -> str:
     p_message = message.lower() 
 
     words = p_message.split()
+    print(words)
 
     if 'stop' and 'annoying' in words:
         return 'annoying'
@@ -11,8 +12,8 @@ def get_reponse(message: str) -> str:
     if 'hello' in words:
         return 'Gunter'
 
-    if 'titties' or 'boobs' or 'titty' in words:
-        return 'https://tenor.com/view/adventure-time-chris-evans-abs-gunther-gif-3540409'
+    # if 'titties' or 'boobs' or 'titty' in words:
+        # return 'https://tenor.com/view/adventure-time-chris-evans-abs-gunther-gif-3540409'
 
     if p_message == '!roll':
         return str(random.randint(1,6))
@@ -26,9 +27,9 @@ def get_reponse(message: str) -> str:
     if p_message == '!help':
         return '`This is a help message that you can modify.`'
 
-    # return 
+    return 
 
-    return 'I didn\'t understand what you wrote. Try typing "!help".'
+    # return 'I didn\'t understand what you wrote. Try typing "!help".'
 
 def annoying_response(number: int) -> str:
 
