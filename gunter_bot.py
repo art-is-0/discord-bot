@@ -54,6 +54,7 @@ def run_discord_bot():
     async def roll(interaction: discord.Interaction, amount_of_dices:int=1, die_sides:int=6, modifers:str='+1'):
         message = f'**{amount_of_dices}d{die_sides} {modifers}** =\n'
         # message = ""
+        # modi = modifers[:1]
         try:
             for i in range(0, amount_of_dices):
                 number = random.randint(1, die_sides)
@@ -63,15 +64,12 @@ def run_discord_bot():
                 # else:
                 #     message += f'**{amount_of_dices}d{die_sides} {modifers}** = {number} {modifers} = {number - int(modifers[1])}\n'
 
-                if number == 20:
+                if number == 20 and die_sides == 20:
                     message += f'\t\t\t\t\t{number} {modifers} = **Nat Twenty**\n'
-                elif number == 1:
+                elif number == 1 and die_sides == 20:
                     message += f'\t\t\t\t\t{number} {modifers} = **Nat One**\n'
                 else:
-                    if modifers[0] == '+':
-                        message += f'\t\t\t\t\t{number} {modifers} = **{number + int(modifers[1])}**\n'
-                    else:
-                        message += f'\t\t\t\t\t{number} {modifers} = **{number - int(modifers[1])}**\n'
+                    message += f'\t\t\t\t\t{number} {modifers} = **{number + int(modifers)}**\n'
             await interaction.response.send_message(f'{message}')
         except:
             await interaction.response.send_message('**Invalid input**, did you try to write modifers like this **+1**')
