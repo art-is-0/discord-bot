@@ -1,7 +1,7 @@
-import bot
+import gunter_bot
 
 def main():
-    bot.run_discord_bot()
+    gunter_bot.run_discord_bot()
 
 # Check main
 if __name__ == '__main__':
