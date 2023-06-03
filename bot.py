@@ -6,6 +6,13 @@ from discord.ext import commands
 import random
 
 async def send_message(message, user_message, is_private):
+    '''
+    A function that is used to send messages back to the sender, channel or dms. 
+    The function gets the message, the message send/posted and if it is supposed to be sent to the persons dms.
+
+    Most often the function sends back a response based on the user_message, if the user_message does not fit
+    any of the responses then it passes the function and returns nothing.
+    '''
     try:
         response = responses.get_reponse(user_message)
 
@@ -114,7 +121,6 @@ def run_discord_bot():
             message += 'Wrong input!'
 
         await interraction.response.send_message(''.join(message))
-
 
     @client.event
     async def on_message(message):
