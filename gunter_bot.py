@@ -1,6 +1,7 @@
 import discord
 import responses
 import discord_token
+import blackjack
 from discord import app_commands
 from discord.ext import commands
 import random
