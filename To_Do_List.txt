@@ -1,9 +1,9 @@
-    *   First make a blackjack game in python, check out programming-projects-for-n00bz github repo for the game
+    X   First make a blackjack game in python, check out programming-projects-for-n00bz github repo for the game
     *   Implement the blackjack game so it works in discord
 
-        *   Make it so you type a slashcommand to start the game
-        *   Have the game be in a function so you don't need to use slashcommands to continue
-        *   Have it so the person that used the slashcommand, has his name saved and his messages get redirected to the game
-
-    *   Later find out a way to put the discord_token in a .env file
-    *   Find a way to hold the code running while me not being active
+        X   Make it so you type a slashcommand to start the game
+        X   Have the game be in a function so you don't need to use slashcommands to continue
+        *   Fix the response system
+        *   Fix the visuals
+        *   Add more time between each send
+        *   Make the code more readable and add descriptions

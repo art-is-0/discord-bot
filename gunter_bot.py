@@ -295,7 +295,7 @@ def run_discord_bot():
             message += "PLAYER HAS A BLACKJACK!!!!\n"
             message += "PLAYER WINS!!!!\n"
             await interraction.channel.send(''.join(message))
-            quit()
+            return
     
         # # Print dealer and player cards
         # message += "DEALER CARDS: \n"
@@ -322,12 +322,9 @@ def run_discord_bot():
             
             choice = await client.wait_for('message', check=check)
 
+            # Response is not really working, the response is going to except
             try:
-            # # Sanity checks for player's choice
-            # if len(choice) != 1 or (choice.upper() != 'H' and choice.upper() != 'S'):
-            #     await interraction.channel.send("Wrong choice!! Try Again")
-            #     await asyncio.sleep(0.2)
-    
+                choice = choice.content
                 # If player decides to HIT
                 if choice.upper() == 'H':
         
@@ -367,6 +364,7 @@ def run_discord_bot():
             except:
                 await interraction.channel.send("Wrong choice!! Try Again")
                 await asyncio.sleep(0.2)
+
         message = ''
         # Print player and dealer cards
         message += "PLAYER CARDS: \n"
@@ -384,19 +382,19 @@ def run_discord_bot():
         # Check if player has a Blackjack
         if player_score == 21:
             await interraction.channel.send("PLAYER HAS A BLACKJACK")
-            quit()
+            return
     
         # Check if player busts
         if player_score > 21:
             await interraction.channel.send("PLAYER BUSTED!!! GAME OVER!!!")
-            quit()
+            return
 
 
         # Managing the dealer moves
         while dealer_score < 17:
             message = ''
     
-            await interraction.response.send_message("DEALER DECIDES TO HIT.....")
+            await interraction.channel.send("DEALER DECIDES TO HIT.....")
     
             # Dealing card for dealer
             dealer_card = random.choice(deck)
@@ -431,27 +429,27 @@ def run_discord_bot():
         # Dealer busts
         if dealer_score > 21:        
             await interraction.channel.send("DEALER BUSTED!!! YOU WIN!!!") 
-            quit()  
+            return  
     
         # Dealer gets a blackjack
         if dealer_score == 21:
             await interraction.channel.send("DEALER HAS A BLACKJACK!!! PLAYER LOSES")
-            quit()
+            return
     
         # TIE Game
         if dealer_score == player_score:
             await interraction.channel.send("TIE GAME!!!!")
-            quit()
+            return
     
         # Player Wins
         elif player_score > dealer_score:
             await interraction.channel.send("PLAYER WINS!!!")                 
-            quit()
+            return
 
         # Dealer Wins
         else:
             await interraction.channel.send("DEALER WINS!!!")                 
-            quit()
+            return
 
 
 
