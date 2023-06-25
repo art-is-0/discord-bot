@@ -1,3 +1,4 @@
+from typing import Optional
 import discord
 import responses
 import discord_token
@@ -74,8 +75,6 @@ def run_discord_bot():
 
 
 
-
-
     # Slash commands
 
     @client.tree.command(name="roll", description = "Rolls dices")
@@ -148,11 +147,107 @@ def run_discord_bot():
 
         await interraction.response.send_message(''.join(message))
 
-
-
+    
+            
 
     @client.tree.command(name='blackjack', description="Play blackjack against the bot!")
     async def play_blackjack(interraction: discord.Interaction):
+
+        choice = False
+
+            # Function to print the cards
+        def print_cards(cards, hidden):
+
+            s = "`"
+            for card in cards:
+                s += "\t______ "
+            if hidden:
+                s += "\t______ "
+
+            s += "\n"
+            for card in cards:
+                s += "\t|    | "
+            if hidden:
+                s += "\t|    | "
+
+            s += "\n"
+            for card in cards:
+                if card.value == '10':
+                    s += "\t| {} | ".format(card.value)
+                else:
+                    s += "\t| {}  | ".format(card.value)
+            if hidden:
+                s += "\t| ## | " 
+
+            s += "\n"
+            for card in cards:
+                s += "\t|  {} | ".format(card.suit)
+            if hidden:
+                s += "\t| ## | "
+
+            s += "\n"
+            for card in cards:
+                s += "\t|____| "
+            if hidden:
+                s += "\t|____| "
+
+            s += "`"
+
+            return (''.join(s))
+
+        # async def hit(interraction, deck, player_cards, player_score, dealer_cards, dealer_score):
+        #     # choice = choice.content
+        #     # # Dealing a new card
+        #     # player_card = random.choice(deck)
+        #     # player_cards.append(player_card)
+        #     # deck.remove(player_card)
+
+        #     # # Updating player score
+        #     # player_score += player_card.card_value
+
+        #     # # Updating player score in case player's card have ace in them
+        #     # c = 0
+        #     # while player_score > 21 and c < len(player_cards):
+        #     #     if player_cards[c].card_value == 11:
+        #     #         player_cards[c].card_value = 1
+        #     #         player_score -= 10
+        #     #         c += 1
+        #     #     else:
+        #     #         c += 1    
+
+        #     # # Print player and dealer cards
+        #     # message += "DEALER CARDS: \n"
+        #     # message += print_cards(dealer_cards[:-1], True)
+        #     # message += f"\nDEALER SCORE = {dealer_score - dealer_cards[-1].card_value} \n"
+
+        #     # message += "PLAYER CARDS: \n"
+        #     # message += print_cards(player_cards, False)
+        #     # message += f"\nPLAYER SCORE = {player_score}\n"
+        #     # await interraction.channel.send(''.join(message))
+        #     # await asyncio.sleep(0.2)
+
+        # async def stand(interraction):
+        #     return True
+
+        class Blackjack(discord.ui.View):
+
+            foo : bool = None
+
+            def __init__(self, *, timeout: float | None = 180):
+                super().__init__(timeout=timeout)
+
+
+            @discord.ui.button(label="hit", style=discord.ButtonStyle.success)
+            async def hit(self, interraction: discord.Interaction, Button: discord.ui.Button):
+                self.foo = True
+                self.stop()
+
+            @discord.ui.button(label="stand", style=discord.ButtonStyle.red)
+            async def stand(self, interraction:discord.Interaction, Button: discord.ui.Button):
+                self.foo = False
+                self.stop()
+                
+
 
         # The Card class definition
         class Card:
@@ -191,44 +286,6 @@ def run_discord_bot():
                 # Adding card to the deck
                 deck.append(Card(suits_values[suit], card, cards_values[card]))
 
-        # Function to print the cards
-        def print_cards(cards, hidden):
-
-            s = ""
-            for card in cards:
-                s += "\t______ "
-            if hidden:
-                s += "\t______ "
-
-            s += "\n"
-            for card in cards:
-                s += "\t|    | "
-            if hidden:
-                s += "\t|    | "
-
-            s += "\n"
-            for card in cards:
-                if card.value == '10':
-                    s += "\t| {} | ".format(card.value)
-                else:
-                    s += "\t| {}  | ".format(card.value)
-            if hidden:
-                s += "\t| ## | " 
-
-            s += "\n"
-            for card in cards:
-                s += "\t|  {} | ".format(card.suit)
-            if hidden:
-                s += "\t| ## | "
-
-            s += "\n"
-            for card in cards:
-                s += "\t|____| "
-            if hidden:
-                s += "\t|____| "
-
-            return (''.join(s))
-            
 
         # Cards for both dealer and player
         player_cards = []
@@ -314,56 +371,51 @@ def run_discord_bot():
     
         # Managing the player moves
         while player_score < 21:
+            view = Blackjack()
             message = ''
-            await interraction.channel.send("Enter H to Hit or S to Stand : ")
+            await interraction.channel.send(content="Press a **button**", view=view)
+            await view.wait()
 
-            def check(m):
-                return m.author == interraction.user and m.channel == interraction.channel
-            
-            choice = await client.wait_for('message', check=check)
-
-            # Response is not really working, the response is going to except
-            try:
-                choice = choice.content
-                # If player decides to HIT
-                if choice.upper() == 'H':
-        
-                    # Dealing a new card
-                    player_card = random.choice(deck)
-                    player_cards.append(player_card)
-                    deck.remove(player_card)
-        
-                    # Updating player score
-                    player_score += player_card.card_value
-        
-                    # Updating player score in case player's card have ace in them
-                    c = 0
-                    while player_score > 21 and c < len(player_cards):
-                        if player_cards[c].card_value == 11:
-                            player_cards[c].card_value = 1
-                            player_score -= 10
-                            c += 1
-                        else:
-                            c += 1    
-        
-                    # Print player and dealer cards
-                    message += "DEALER CARDS: \n"
-                    message += print_cards(dealer_cards[:-1], True)
-                    message += f"\nDEALER SCORE = {dealer_score - dealer_cards[-1].card_value} \n"
-        
-                    message += "PLAYER CARDS: \n"
-                    message += print_cards(player_cards, False)
-                    message += f"\nPLAYER SCORE = { player_score}\n"
-                    await interraction.channel.send(''.join(message))
-                    await asyncio.sleep(0.2)
-                    
-                # If player decides to Stand
-                if choice.upper() == 'S':
-                    break
-
-            except:
-                await interraction.channel.send("Wrong choice!! Try Again")
+            if view.foo is True:
+                # Dealing a new card
+                player_card = random.choice(deck)
+                player_cards.append(player_card)
+                deck.remove(player_card)
+    
+                # Updating player score
+                player_score += player_card.card_value
+    
+                # Updating player score in case player's card have ace in them
+                c = 0
+                while player_score > 21 and c < len(player_cards):
+                    if player_cards[c].card_value == 11:
+                        player_cards[c].card_value = 1
+                        player_score -= 10
+                        c += 1
+                    else:
+                        c += 1    
+    
+                # Print player and dealer cards
+                message += "DEALER CARDS: \n"
+                message += print_cards(dealer_cards[:-1], True)
+                message += f"\nDEALER SCORE = {dealer_score - dealer_cards[-1].card_value} \n"
+    
+                message += "PLAYER CARDS: \n"
+                message += print_cards(player_cards, False)
+                message += f"\nPLAYER SCORE = { player_score}\n"
+                await interraction.channel.send(''.join(message))
                 await asyncio.sleep(0.2)
+            
+            if view.foo is False:
+                break
+                    
+            # # If player decides to Stand
+            # if choice.upper() == 'S':
+            #     break
+
+            # except:
+            #     await interraction.channel.send("Wrong choice!! Try Again")
+            #     await asyncio.sleep(0.2)
 
         message = ''
         # Print player and dealer cards
