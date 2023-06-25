@@ -6,5 +6,7 @@
         X   Fix the response system
         X   Using buttons for hit or stand
         *   Fix the visuals, kinda done, at the beginnning and end of the card command use ``, to make it into code and more viewable in discord
+            *   Maybe try to use embeds when the message is sent
+            
         *   Add more time between each send, using asyncio.sleep()
         *   Make the code more readable and add descriptions

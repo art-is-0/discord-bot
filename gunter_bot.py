@@ -1,8 +1,6 @@
-from typing import Optional
 import discord
 import responses
 import discord_token
-import blackjack
 from discord import app_commands
 from discord.ext import commands
 import random
@@ -153,8 +151,6 @@ def run_discord_bot():
     @client.tree.command(name='blackjack', description="Play blackjack against the bot!")
     async def play_blackjack(interraction: discord.Interaction):
 
-        choice = False
-
             # Function to print the cards
         def print_cards(cards, hidden):
 
@@ -195,47 +191,19 @@ def run_discord_bot():
 
             return (''.join(s))
 
-        # async def hit(interraction, deck, player_cards, player_score, dealer_cards, dealer_score):
-        #     # choice = choice.content
-        #     # # Dealing a new card
-        #     # player_card = random.choice(deck)
-        #     # player_cards.append(player_card)
-        #     # deck.remove(player_card)
-
-        #     # # Updating player score
-        #     # player_score += player_card.card_value
-
-        #     # # Updating player score in case player's card have ace in them
-        #     # c = 0
-        #     # while player_score > 21 and c < len(player_cards):
-        #     #     if player_cards[c].card_value == 11:
-        #     #         player_cards[c].card_value = 1
-        #     #         player_score -= 10
-        #     #         c += 1
-        #     #     else:
-        #     #         c += 1    
-
-        #     # # Print player and dealer cards
-        #     # message += "DEALER CARDS: \n"
-        #     # message += print_cards(dealer_cards[:-1], True)
-        #     # message += f"\nDEALER SCORE = {dealer_score - dealer_cards[-1].card_value} \n"
-
-        #     # message += "PLAYER CARDS: \n"
-        #     # message += print_cards(player_cards, False)
-        #     # message += f"\nPLAYER SCORE = {player_score}\n"
-        #     # await interraction.channel.send(''.join(message))
-        #     # await asyncio.sleep(0.2)
-
-        # async def stand(interraction):
-        #     return True
-
+        # The class for the buttons
         class Blackjack(discord.ui.View):
+            '''
+            The way it works is by having two buttons with different choices. \r
+            There is a variable foo that is changed based on which button is pressed. \r
+            There is a self.stop() function to break out of the interractions, 
+            and the variable is used later in the game to confirm the players choices.
+            '''
 
             foo : bool = None
 
             def __init__(self, *, timeout: float | None = 180):
                 super().__init__(timeout=timeout)
-
 
             @discord.ui.button(label="hit", style=discord.ButtonStyle.success)
             async def hit(self, interraction: discord.Interaction, Button: discord.ui.Button):
@@ -243,10 +211,9 @@ def run_discord_bot():
                 self.stop()
 
             @discord.ui.button(label="stand", style=discord.ButtonStyle.red)
-            async def stand(self, interraction:discord.Interaction, Button: discord.ui.Button):
+            async def stand(self, interraction: discord.Interaction, Button: discord.ui.Button):
                 self.foo = False
                 self.stop()
-                
 
 
         # The Card class definition
@@ -316,7 +283,7 @@ def run_discord_bot():
             # Print player cards and score      
             message += "PLAYER CARDS: \n"
             message += print_cards(player_cards, False)
-            message += f"\nPLAYER SCORE = {player_score} \n\n"
+            message += f"\n\nPLAYER SCORE = **{player_score}** \n\n"
     
     
             # Randomly dealing a card
@@ -331,10 +298,10 @@ def run_discord_bot():
             message += "DEALER CARDS: \n"
             if len(dealer_cards) == 1:
                 message += print_cards(dealer_cards, False)
-                message += f"\nDEALER SCORE = {dealer_score} \n"
+                message += f"\n\nDEALER SCORE = **{dealer_score}** \n\n"
             else:
                 message += print_cards(dealer_cards[:-1], True)   
-                message += f"\nDEALER SCORE = {dealer_score - dealer_cards[-1].card_value}\n"
+                message += f"\n\nDEALER SCORE = **{dealer_score - dealer_cards[-1].card_value}**\n\n"
     
     
             # In case both the cards are Ace, make the second ace value as 1 
@@ -344,13 +311,14 @@ def run_discord_bot():
                     dealer_score -= 10
     
             await interraction.channel.send(''.join(message))
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(1)
     
         message = ''
+
         # Player gets a blackjack   
         if player_score == 21:
-            message += "PLAYER HAS A BLACKJACK!!!!\n"
-            message += "PLAYER WINS!!!!\n"
+            message += "# PLAYER HAS A BLACKJACK!!!!\n\n"
+            message += "# PLAYER WINS!!!!\n"
             await interraction.channel.send(''.join(message))
             return
     
@@ -359,23 +327,24 @@ def run_discord_bot():
         # message += print_cards(dealer_cards[:-1], True), '\n'
         # message += "DEALER SCORE = ", dealer_score - dealer_cards[-1].card_value, '\n'
     
-        # print() 
     
-        message += "PLAYER CARDS: \n"
+        message += "\nPLAYER CARDS: \n"
         message += print_cards(player_cards, False)
-        message += f"PLAYER SCORE = {player_score} \n"
+        message += f"\n\nPLAYER SCORE = **{player_score}** \n\n"
         await interraction.channel.send(''.join(message))
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(1)
 
-
-    
         # Managing the player moves
         while player_score < 21:
+            # Making the button class into a var so it is easier to work with
             view = Blackjack()
             message = ''
-            await interraction.channel.send(content="Press a **button**", view=view)
+            # Sending the message with the button
+            await interraction.channel.send(content="## Press a button", view=view)
+            # Waiting for a response from a button
             await view.wait()
 
+            # Checks if the button pressed is hit or stand
             if view.foo is True:
                 # Dealing a new card
                 player_card = random.choice(deck)
@@ -398,55 +367,47 @@ def run_discord_bot():
                 # Print player and dealer cards
                 message += "DEALER CARDS: \n"
                 message += print_cards(dealer_cards[:-1], True)
-                message += f"\nDEALER SCORE = {dealer_score - dealer_cards[-1].card_value} \n"
+                message += f"\n\nDEALER SCORE = **{dealer_score - dealer_cards[-1].card_value}** \n"
     
-                message += "PLAYER CARDS: \n"
+                message += "\nPLAYER CARDS: \n"
                 message += print_cards(player_cards, False)
-                message += f"\nPLAYER SCORE = { player_score}\n"
+                message += f"\n\nPLAYER SCORE = **{player_score}**\n"
                 await interraction.channel.send(''.join(message))
-                await asyncio.sleep(0.2)
+                await asyncio.sleep(1)
             
             if view.foo is False:
                 break
-                    
-            # # If player decides to Stand
-            # if choice.upper() == 'S':
-            #     break
 
-            # except:
-            #     await interraction.channel.send("Wrong choice!! Try Again")
-            #     await asyncio.sleep(0.2)
 
         message = ''
         # Print player and dealer cards
-        message += "PLAYER CARDS: \n"
+        message += "\nPLAYER CARDS: \n"
         message += print_cards(player_cards, False)
-        message += f"\nPLAYER SCORE = {player_score} \n"
+        message += f"\n\nPLAYER SCORE = **{player_score}** \n"
     
         message += "\nDEALER IS REVEALING THE CARDS....\n"
     
         message += "\nDEALER CARDS: \n"
         message += print_cards(dealer_cards, False)
-        message += f"\nDEALER SCORE = { dealer_score}\n"
+        message += f"\n\nDEALER SCORE = **{dealer_score}**\n"
         await interraction.channel.send(''.join(message))
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(1)
     
         # Check if player has a Blackjack
         if player_score == 21:
-            await interraction.channel.send("PLAYER HAS A BLACKJACK")
+            await interraction.channel.send("# PLAYER HAS A BLACKJACK")
             return
     
         # Check if player busts
         if player_score > 21:
-            await interraction.channel.send("PLAYER BUSTED!!! GAME OVER!!!")
+            await interraction.channel.send("# PLAYER BUSTED!!! GAME OVER!!!")
             return
-
 
         # Managing the dealer moves
         while dealer_score < 17:
             message = ''
     
-            await interraction.channel.send("DEALER DECIDES TO HIT.....")
+            await interraction.channel.send("## DEALER DECIDES TO HIT..... ##")
     
             # Dealing card for dealer
             dealer_card = random.choice(deck)
@@ -469,41 +430,39 @@ def run_discord_bot():
             # print player and dealer cards
             message += "PLAYER CARDS: \n"
             message += print_cards(player_cards, False)
-            message += f"\nPLAYER SCORE = {player_score}\n\n"
+            message += f"\n\nPLAYER SCORE = **{player_score}**\n\n"
     
             message += "DEALER CARDS: \n"
             message += print_cards(dealer_cards, False)
-            message += f"\nDEALER SCORE = {dealer_score}\n"      
+            message += f"\n\nDEALER SCORE = **{dealer_score}**\n"      
     
             await interraction.channel.send(''.join(message))
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(1)
     
         # Dealer busts
         if dealer_score > 21:        
-            await interraction.channel.send("DEALER BUSTED!!! YOU WIN!!!") 
+            await interraction.channel.send("# DEALER BUSTED!!! YOU WIN!!!") 
             return  
     
         # Dealer gets a blackjack
         if dealer_score == 21:
-            await interraction.channel.send("DEALER HAS A BLACKJACK!!! PLAYER LOSES")
+            await interraction.channel.send("# DEALER HAS A BLACKJACK!!! PLAYER LOSES")
             return
     
         # TIE Game
         if dealer_score == player_score:
-            await interraction.channel.send("TIE GAME!!!!")
+            await interraction.channel.send("# TIE GAME!!!!")
             return
     
         # Player Wins
         elif player_score > dealer_score:
-            await interraction.channel.send("PLAYER WINS!!!")                 
+            await interraction.channel.send("# PLAYER WINS!!!")                 
             return
 
         # Dealer Wins
         else:
-            await interraction.channel.send("DEALER WINS!!!")                 
+            await interraction.channel.send("# DEALER WINS!!!")                 
             return
-
-
 
 
     client.run(TOKEN)
