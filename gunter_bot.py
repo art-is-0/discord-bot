@@ -145,9 +145,6 @@ def run_discord_bot():
 
         await interraction.response.send_message(''.join(message))
 
-    
-            
-
     @client.tree.command(name='blackjack', description="Play blackjack against the bot!")
     async def play_blackjack(interraction: discord.Interaction):
 
@@ -331,7 +328,13 @@ def run_discord_bot():
         message += "\nPLAYER CARDS: \n"
         message += print_cards(player_cards, False)
         message += f"\n\nPLAYER SCORE = **{player_score}** \n\n"
-        await interraction.channel.send(''.join(message))
+
+        # embed = discord.Embed(
+        #     color=discord.Color.dark_gold()
+        #     ,description=''.join(message)
+        # )
+
+        await interraction.channel.send(content=''.join(message))
         await asyncio.sleep(1)
 
         # Managing the player moves
@@ -385,7 +388,7 @@ def run_discord_bot():
         message += print_cards(player_cards, False)
         message += f"\n\nPLAYER SCORE = **{player_score}** \n"
     
-        message += "\nDEALER IS REVEALING THE CARDS....\n"
+        message += "\n## DEALER IS REVEALING THE CARDS.... ##\n"
     
         message += "\nDEALER CARDS: \n"
         message += print_cards(dealer_cards, False)
@@ -463,6 +466,5 @@ def run_discord_bot():
         else:
             await interraction.channel.send("# DEALER WINS!!!")                 
             return
-
 
     client.run(TOKEN)

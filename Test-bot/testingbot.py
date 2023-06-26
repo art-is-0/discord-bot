@@ -24,6 +24,15 @@ async def shutdown(interraction: discord.Interaction):
     await interraction.response.send_message(content='*Shutting down the bot*')
     await client.close()
 
+@client.tree.command(name='embeds')
+async def test(interraction: discord.Interaction):
+    embed = discord.Embed(
+        colour=discord.Colour.dark_gold()
+        ,description='something\rsomething\r'
+    )
+
+    await interraction.channel.send(embed=embed)
+
 class TestButtons(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -34,7 +43,12 @@ class TestButtons(discord.ui.View):
 
 @client.tree.command(name='something')
 async def something(interaction: discord.Interaction):
-    await interaction.response.send_message(content="This message has a button", view=TestButtons())
+    embed = discord.Embed(
+        colour=discord.Colour.dark_gold()
+        ,description='something\rsomething\r'
+    )
+
+    await interaction.response.send_message(embed=embed, view=TestButtons())
 
 # @client.tree.command(name='blackjack-test')
 # async def test(interaction: discord.Interaction):
