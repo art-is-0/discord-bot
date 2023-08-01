@@ -6,14 +6,14 @@ def get_reponse(message: str) -> str:
     words = p_message.split()
     print(words)
 
-    if 'stop' and 'annoying' in words:
+    if 'stop' in words or 'annoying' in words:
         return 'annoying'
 
     if 'hello' in words:
         return 'Gunter'
 
-    # if 'titties' or 'boobs' or 'titty' in words:
-        # return 'https://tenor.com/view/adventure-time-chris-evans-abs-gunther-gif-3540409'
+    if 'titties' in words or 'boobs' in words or 'titty' in words:
+        return 'https://tenor.com/view/adventure-time-chris-evans-abs-gunther-gif-3540409'
 
     if p_message == '!roll':
         return str(random.randint(1,6))

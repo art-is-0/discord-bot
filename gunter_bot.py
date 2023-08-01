@@ -134,7 +134,7 @@ def run_discord_bot():
     async def coin_flip(interraction: discord.Interaction, which_side:str='heads'):
         lst = ['heads', 'tails']
         flipped = lst[random.randint(0,1)]
-        message = f'You said {which_side} and it was {flipped}.\n'
+        message = f'You said ***{which_side}*** and it was ***{flipped}***.\n'
         if which_side.lower not in lst:
             message += 'Wrong input!'
         else:
