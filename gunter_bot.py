@@ -1,20 +1,22 @@
 import discord
 import responses
-import discord_token
-import application_id
 from discord import app_commands
 from discord.ext import commands
 import random
 import asyncio
 import os
+from dotenv import load_dotenv
 
 
-TOKEN = discord_token.token()   # try to find out how to put the token into a .env file and get it to work.
+# TOKEN = discord_token.token()   # try to find out how to put the token into a .env file and get it to work.
+load_dotenv()
+discord_token = os.getenv('DISCORD_TOKEN')
+application_id = os.getenv('APPLICATION_ID')
 # TOKEN = DISCORD_TOKEN
 # intents = discord.Intents.all()
 # intents.message_content = True
 # client = discord.Client(intents=intents)
-client = commands.Bot(command_prefix='!', intents = discord.Intents.all(), application_id=application_id.id()) # Watch the damn capatalization on the Bot, pain ahhhh
+client = commands.Bot(command_prefix='!', intents = discord.Intents.all(), application_id=application_id) # Watch the damn capatalization on the Bot, pain ahhhh
 
 @client.event
 async def on_ready():
@@ -86,14 +88,11 @@ async def load():
             else:
                 await client.load_extension(f'cogs.{file[:-3]}')    
 
-
-# client.run(TOKEN)
-
 # Starting function
 async def main():
     # To load the slash commands and the bot at the same time
     await load()
-    await client.start(TOKEN)
+    await client.start(discord_token)
 
 
 # Runs the start function
