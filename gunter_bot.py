@@ -1,6 +1,7 @@
 import discord
 import responses
 import discord_token
+import applicaiton_id
 from discord import app_commands
 from discord.ext import commands
 import random
@@ -44,7 +45,7 @@ def run_discord_bot():
     # intents = discord.Intents.all()
     # intents.message_content = True
     # client = discord.Client(intents=intents)
-    client = commands.Bot(command_prefix='!', intents = discord.Intents.all()) # Watch the damn capatalization on the Bot, pain ahhhh
+    client = commands.Bot(command_prefix='!', intents = discord.Intents.all(), application_id=applicaiton_id.id()) # Watch the damn capatalization on the Bot, pain ahhhh
 
     @client.event
     async def on_ready():

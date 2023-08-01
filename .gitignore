@@ -2,6 +2,7 @@
 discord_token.py
 __pycache__
 discord_token.env
+application_id.py
 
  Byte-compiled / optimized / DLL files
 __pycache__/
