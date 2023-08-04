@@ -6,6 +6,7 @@ import random
 import asyncio
 import os
 from dotenv import load_dotenv
+from cogs import coinflip 
 
 
 # TOKEN = discord_token.token()   # try to find out how to put the token into a .env file and get it to work.
@@ -87,6 +88,16 @@ async def load():
                 pass
             else:
                 await client.load_extension(f'cogs.{file[:-3]}')    
+
+# class PersistentViewBot(commands.Bot):
+#     def __init__(self):
+#         intents = discord.Intents().all()
+#         super().__init__(command_prefix=commands.when_mentioned_or('.'), intents=intents)
+#     async def setup_hook(self) -> None:
+#         self.add_view()
+
+# client = PersistentViewBot()
+
 
 # Starting function
 async def main():
