@@ -1,110 +1,85 @@
 import discord
-import responses
-from discord import app_commands
 from discord.ext import commands
-import random
-import asyncio
-import os
+from colorama import Back, Fore, Style
 from dotenv import load_dotenv
-from cogs import coinflip 
+import os
+import time
+import platform
 
-
-# TOKEN = discord_token.token()   # try to find out how to put the token into a .env file and get it to work.
 load_dotenv()
+
 discord_token = os.getenv('DISCORD_TOKEN')
 application_id = os.getenv('APPLICATION_ID')
-# TOKEN = DISCORD_TOKEN
-# intents = discord.Intents.all()
-# intents.message_content = True
-# client = discord.Client(intents=intents)
-client = commands.Bot(command_prefix='!', intents = discord.Intents.all(), application_id=application_id) # Watch the damn capatalization on the Bot, pain ahhhh
+test_guild = int(os.getenv('TEST_GUILD'))
+test_guild = discord.Object(id=test_guild)
 
-@client.event
-async def on_ready():
-    print(f'{client.user} is now running!')
-    synced = await client.tree.sync()
-    print(f'Synced {len(synced)} command(s)')
+class Client(commands.Bot):
+    def __init__(self):
+        super().__init__(command_prefix=commands.when_mentioned_or('!'), intents=discord.Intents().all(), application_id=application_id)
+        self.cogs_list = [
+                          'cogs.blackjack', 
+                          'cogs.coin_flip', 
+                          'cogs.coinflip', 
+                          'cogs.roll_a_dice', 
+                          'cogs.roll_dnd',
+                          'cogs.roll_stats', 
+                          'cogs.shutdown', 
+                          'cogs.testcog'
+                          ]
 
-async def send_message(message, user_message, is_private):
-    '''
-    A function that is used to send messages back to the sender, channel or dms. 
-    The function gets the message, the message send/posted and if it is supposed to be sent to the persons dms.
+    async def setup_hook(self):
+        for ext in self.cogs_list:
+            try: 
+                await self.load_extension(ext)  
+            except Exception as e:
+                print('Failed to load extension %s.', ext)
+                print(e)
 
-    Most often the function sends back a response based on the user_message, if the user_message does not fit
-    any of the responses then it passes the function and returns nothing.
-    '''
-    try:
-        response = responses.get_reponse(user_message)
-
-        match response:
-            case 'annoying':
-                for i in range(6):
-                    response = responses.annoying_response(i)
-                    await message.author.send(response)
-
-            case str():
-                await message.author.send(response) if is_private else await message.channel.send(response)
-
-            case _:
-                pass
-
-    except Exception as e: 
-        print(e)
+    async def on_ready(self):
+        prfx = (Back.BLACK + Fore.GREEN + time.strftime("%H:%M:%S UTC", time.gmtime()) + Back.RESET + Fore.WHITE + Style.BRIGHT)
+        print(prfx + " Logged in as " + Fore.YELLOW + self.user.name)
+        print(prfx + " Bot ID " + Fore.YELLOW + str(self.user.id))
+        print(prfx + " Discord Version " + Fore.YELLOW + discord.__version__)
+        print(prfx + " Python Version " + Fore.YELLOW + str(platform.python_version()))
+        # synced = await self.tree.sync()
+        # print(prfx + " Slash CMDs Synced " + Fore.YELLOW + str(len(synced)) + " Commands" + Fore.RESET)
 
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
+client = Client()
+
+from typing import Literal, Optional
+
+@client.command()
+@commands.guild_only()
+async def sync(ctx: commands.Context, guilds: commands.Greedy[discord.Object], spec: Optional[Literal["~", "*", "^"]] = None) -> None:
+    if not guilds:
+        if spec == "~":
+            synced = await ctx.bot.tree.sync(guild=ctx.guild)
+        elif spec == "*":
+            ctx.bot.tree.copy_global_to(guild=ctx.guild)
+            synced = await ctx.bot.tree.sync(guild=ctx.guild)
+        elif spec == "^":
+            ctx.bot.tree.clear_commands(guild=ctx.guild)
+            await ctx.bot.tree.sync(guild=ctx.guild)
+            synced = []
+        else:
+            synced = await ctx.bot.tree.sync()
+
+        await ctx.send(
+            f"Synced {len(synced)} commands {'globally' if spec is None else 'to the current guild.'}"
+        )
         return
 
-    username = str(message.author)
-    user_message = str(message.content)
-    channel = str(message.channel)
+    ret = 0
+    for guild in guilds:
+        try:
+            await ctx.bot.tree.sync(guild=guild)
+        except discord.HTTPException:
+            pass
+        else:
+            ret += 1
 
-    print(f'{username} said: "{user_message}" ({channel})')
-
-    match user_message[0]:
-        case '?':
-            user_message = user_message[1:]
-            await send_message(message, user_message, is_private=True)
-
-        case _:
-            await send_message(message, user_message, is_private=False)
-
-# Get the current directory (where your Python script is located)
-current_directory = os.path.dirname(__file__)
-
-# Specify the path to the "cogs" folder using os.path.join()
-cogs_folder_path = os.path.join(current_directory, "cogs")
-
-# Loading in the slash commands
-async def load():
-    # Loops through the "cogs" folder to load every file that ends in .py
-    for file in os.listdir(cogs_folder_path):
-        if file.endswith('.py'):
-            if file.startswith('template'):
-                pass
-            elif file.startswith('test'):
-                pass
-            else:
-                await client.load_extension(f'cogs.{file[:-3]}')    
-
-# class PersistentViewBot(commands.Bot):
-#     def __init__(self):
-#         intents = discord.Intents().all()
-#         super().__init__(command_prefix=commands.when_mentioned_or('.'), intents=intents)
-#     async def setup_hook(self) -> None:
-#         self.add_view()
-
-# client = PersistentViewBot()
+    await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
 
 
-# Starting function
-async def main():
-    # To load the slash commands and the bot at the same time
-    await load()
-    await client.start(discord_token)
-
-
-# Runs the start function
-asyncio.run(main())
+client.run(discord_token)

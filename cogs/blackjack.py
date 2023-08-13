@@ -8,9 +8,9 @@ class blackjack(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print("Blackjack is synced")
+    # @commands.Cog.listener()
+    # async def on_ready(self):
+    #     print("Blackjack is synced")
 
     # @commands.command()
     # async def sync(self) -> None:
@@ -20,7 +20,7 @@ class blackjack(commands.Cog):
     @app_commands.command(name='blackjack', description="Play blackjack against the bot!")
     async def blackjack(self, interraction: discord.Interaction):
 
-        await interraction.channel.send('# A Blackjack Game Is Starting!!!')
+        await interraction.channel.send(content='# A Blackjack Game Is Starting!!!', delete_after=60)
         
             # Function to print the cards
         def print_cards(cards, hidden):

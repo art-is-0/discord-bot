@@ -8,17 +8,17 @@ class roll(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print("roll is synced")
+    # @commands.Cog.listener()
+    # async def on_ready(self):
+    #     print("roll is synced")
 
     # @commands.command()
     # async def sync(self) -> None:
     #     synced = await self.client.tree.sync()
     #     await print(f'Synced {len(synced)} commands')
 
-    @app_commands.command(name="roll", description = "Rolls dices")
-    async def roll(interaction: discord.Interaction, amount_of_dices:int=1, die_sides:int=6, modifers:str='+1'):
+    @app_commands.command(name="roll-dnd", description = "Rolls dices")
+    async def roll(self, interaction: discord.Interaction, amount_of_dices:int=1, die_sides:int=6, modifers:str='+1'):
         message = f'**{amount_of_dices}d{die_sides} {modifers}** =\n'
         # message = ""
         # modi = modifers[:1]

@@ -8,9 +8,9 @@ class roll_stats(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print("roll_stats is synced")
+    # @commands.Cog.listener()
+    # async def on_ready(self):
+    #     print("roll_stats is synced")
 
     # @commands.command()
     # async def sync(self) -> None:
@@ -18,7 +18,7 @@ class roll_stats(commands.Cog):
     #     await print(f'Synced {len(synced)} commands')
 
     @app_commands.command(name='roll-stats', description='Roll for stats')
-    async def roll_stats(interraction: discord.Interaction, die_sides:int=6):
+    async def roll_stats(self, interraction: discord.Interaction, die_sides:int=6):
         message = ''
         match die_sides:
             case 6:

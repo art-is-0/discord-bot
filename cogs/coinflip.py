@@ -8,9 +8,9 @@ class coinflip(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print("coinflip is synced")
+    # @commands.Cog.listener()
+    # async def on_ready(self):
+    #     print("coinflip is synced")
 
     @app_commands.command(name='coinflip', description='Guess which side the coin will fall on.')
     async def coinflip(self, interaction: discord.Interaction):
@@ -33,7 +33,7 @@ class coinflip(commands.Cog):
             async def tails(self, interaction: discord.Interaction, Button: discord.ui.Button):
                 await heads_or_tails(interaction, 'tails')
 
-        await interaction.response.send_message(content="Please choose **Heads** or **Tails**", view=Cf())
+        await interaction.response.send_message(content="Please choose **Heads** or **Tails**", view=Cf(), delete_after=60)
 
 
 

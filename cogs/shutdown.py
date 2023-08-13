@@ -8,14 +8,9 @@ class shutdown(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print("shutdown is synced")
-
-    # @commands.command()
-    # async def sync(self) -> None:
-    #     synced = await self.client.tree.sync()
-    #     await print(f'Synced {len(synced)} commands')
+    # @commands.Cog.listener()
+    # async def on_ready(self):
+    #     print("shutdown is synced")
 
     @app_commands.command(name='shutdown', description='Shutting down the bot')
     async def shutdown(self, interraction: discord.Interaction):
