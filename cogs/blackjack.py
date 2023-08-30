@@ -25,7 +25,7 @@ class blackjack(commands.Cog):
             # Function to print the cards
         def print_cards(cards, hidden):
 
-            s = "`"
+            s = "```"
             for card in cards:
                 s += "\t______ "
             if hidden:
@@ -58,7 +58,7 @@ class blackjack(commands.Cog):
             if hidden:
                 s += "\t|____| "
 
-            s += "`"
+            s += "```"
 
             return (''.join(s))
 
