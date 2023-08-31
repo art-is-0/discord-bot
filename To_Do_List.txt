@@ -11,8 +11,8 @@
         X   Add more time between each send, using asyncio.sleep()
         X   Make the code more readable and add descriptions
 
-    *   Put the slash commands in cogs
-        *   Sync the damn code to discord
+    X   Put the slash commands in cogs
+        X   Sync the damn code to discord
     X   Later find out a way to put the discord_token in a .env file
     *   Find a way to hold the code running while me not being active
     *   Add ffmpeg support

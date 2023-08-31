@@ -8,27 +8,28 @@ import platform
 
 load_dotenv()
 
-discord_token = os.getenv('DISCORD_TOKEN')
-application_id = os.getenv('APPLICATION_ID')
 # test_guild = int(os.getenv('TEST_GUILD'))
 # test_guild = discord.Object(id=test_guild)
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+APPLICATION_ID = os.getenv('APPLICATION_ID')
 
 class Client(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix=commands.when_mentioned_or('!'), intents=discord.Intents().all(), application_id=application_id)
-        self.cogs_list = [
-                          'cogs.blackjack', 
-                          'cogs.coin_flip', 
-                          'cogs.coinflip', 
-                          'cogs.roll_a_dice', 
-                          'cogs.roll_dnd',
-                          'cogs.roll_stats', 
-                          'cogs.shutdown', 
-                          'cogs.testcog'
+        super().__init__(command_prefix=commands.when_mentioned_or('!'), intents=discord.Intents().all(), application_id=APPLICATION_ID)
+        self.initial_extensions = [
+                            'cogs.blackjack',
+                            'cogs.coin_flip',
+                            'cogs.coinflip',
+                            'cogs.roll_a_dice',
+                            'cogs.roll_dnd',
+                            'cogs.roll_stats',
+                            'cogs.shutdown',
+                            # 'cogs.testcog'
+                            'cogs.selectmenus'
                           ]
 
     async def setup_hook(self):
-        for ext in self.cogs_list:
+        for ext in self.initial_extensions:
             try: 
                 await self.load_extension(ext)  
             except Exception as e:
@@ -81,5 +82,4 @@ async def sync(ctx: commands.Context, guilds: commands.Greedy[discord.Object], s
 
     await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
 
-
-client.run(discord_token)
+client.run(DISCORD_TOKEN)
