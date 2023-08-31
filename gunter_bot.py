@@ -10,8 +10,8 @@ load_dotenv()
 
 discord_token = os.getenv('DISCORD_TOKEN')
 application_id = os.getenv('APPLICATION_ID')
-test_guild = int(os.getenv('TEST_GUILD'))
-test_guild = discord.Object(id=test_guild)
+# test_guild = int(os.getenv('TEST_GUILD'))
+# test_guild = discord.Object(id=test_guild)
 
 class Client(commands.Bot):
     def __init__(self):
